@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>AI Roast My Bio | Embed Factory</title>
+    <meta name="description" content="Let AI brutally destroy your Instagram bio. Embed this tool on your site free.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0f0f0f; color: white; font-family: system-ui; }
+        .roast-box { background: #1e1e1e; border-left: 4px solid #f43f5e; }
+    </style>
+</head>
+<body class="p-4 max-w-md mx-auto">
+    <div class="flex items-center gap-2 mb-6">
+        <a href="https://mobifactory.pages.dev" class="text-2xl">←</a>
+        <h1 class="text-2xl font-bold tracking-tight">🔥 AI Bio Roaster</h1>
+    </div>
+
+    <p class="text-zinc-400 text-sm mb-4">Enter your bio (or someone else's). AI will roast it.</p>
+
+    <textarea id="bioInput" placeholder="e.g. 'Travel addict | Dog mom | Living life to the fullest ✨'"
+              class="w-full h-32 p-4 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-sm resize-none focus:ring-2 focus:ring-pink-600 outline-none"></textarea>
+
+    <button id="roastBtn" class="w-full mt-3 bg-gradient-to-r from-pink-600 to-red-600 text-white font-bold py-4 rounded-xl text-lg shadow-lg hover:scale-[0.99] transition">
+        🔥 Roast Me Hard
+    </button>
+
+    <div id="resultArea" class="mt-6 hidden">
+        <div class="roast-box p-4 rounded-xl">
+            <p id="roastText" class="text-white text-md italic"></p>
+        </div>
+        <div class="flex gap-3 mt-4">
+            <button id="copyBtn" class="flex-1 bg-zinc-800 text-white py-3 rounded-xl text-sm font-medium border border-zinc-700">📋 Copy Roast</button>
+            <button id="shareBtn" class="flex-1 bg-blue-600 text-white py-3 rounded-xl text-sm font-medium">📤 Share</button>
+        </div>
+
+        <!-- Embed this tool section -->
+        <div class="mt-6 p-3 bg-zinc-900 rounded-xl border border-zinc-800 text-center">
+            <p class="text-xs text-zinc-500 mb-2">Want this tool on your site?</p>
+            <textarea readonly id="embedCode" class="w-full h-12 p-2 bg-black border border-zinc-700 rounded-lg text-xs text-green-400 font-mono mb-2">&lt;iframe src="https://mobifactory.pages.dev/tools/roast-bio.html" width="100%" height="400" frameborder="0"&gt;&lt;/iframe&gt;</textarea>
+            <button onclick="copyEmbed()" class="bg-green-700 text-white px-4 py-1 rounded-lg text-xs font-bold">📋 Copy Embed Code</button>
+        </div>
+    </div>
+
+    <script>
+        const roastTemplates = [
+            "Your bio sounds like it was written by a LinkedIn AI having a stroke.",
+            "If 'cringe' was a bio, this would be it. Congrats.",
+            "You use emojis like a dad trying to be hip.",
+            "This bio has more red flags than a communist parade.",
+            "I'd roast you harder but my programming prevents cruelty to animals.",
+            "Your bio is so generic, it could be on a stock photo website.",
+            "You misspelled 'desperate for validation'.",
+            "Even ChatGPT refused to claim responsibility for this bio.",
+            "Your personality is like your bio: trying too hard.",
+            "If boring was a sport, this bio would be Olympic gold."
+        ];
+
+        document.getElementById('roastBtn').addEventListener('click', function() {
+            let bio = document.getElementById('bioInput').value.trim();
+            let roast = "";
+            if (bio === "") {
+                roast = "Wow. An empty bio. That's actually the most interesting thing about you.";
+            } else {
+                let randomIndex = Math.floor(Math.random() * roastTemplates.length);
+                roast = roastTemplates[randomIndex];
+                if (bio.length < 10) roast = "That's it? Short bio... short attention span. " + roast;
+                if (bio.includes("💕") || bio.includes("❤️")) roast = "Oh look, hearts. Desperate much? " + roast;
+            }
+            document.getElementById('roastText').innerText = roast;
+            document.getElementById('resultArea').classList.remove('hidden');
+        });
+
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            let text = document.getElementById('roastText').innerText;
+            navigator.clipboard.writeText(text);
+            alert('Roast copied!');
+        });
+
+        document.getElementById('shareBtn').addEventListener('click', function() {
+            let text = document.getElementById('roastText').innerText;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'AI Roasted My Bio',
+                    text: text,
+                    url: 'https://mobifactory.pages.dev/tools/roast-bio.html',
+                });
+            } else {
+                navigator.clipboard.writeText(text + " https://mobifactory.pages.dev/tools/roast-bio.html");
+                alert('Link & Roast copied! Share it manually.');
+            }
+        });
+
+        function copyEmbed() {
+            const code = document.getElementById('embedCode');
+            code.select();
+            code.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(code.value);
+            alert('Embed code copied! Paste it on your site.');
+        }
+    </script>
+</body>
+</html>
