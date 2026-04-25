@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Hacker Name Generator | Embed Factory</title>
+    <meta name="description" content="Generate your cyberpunk hacker alias. Embed this tool free on your site.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0f0f0f; color: #f1f5f9; font-family: 'Courier New', monospace; }
+    </style>
+</head>
+<body class="p-4 max-w-md mx-auto">
+    <!-- Back link and title -->
+    <div class="flex items-center gap-2 mb-6">
+        <a href="https://mobifactory.pages.dev" class="text-2xl text-gray-400">←</a>
+        <h1 class="text-2xl font-bold tracking-tight text-green-400">$ HACKER_NAME</h1>
+    </div>
+
+    <p class="text-zinc-400 text-sm mb-4">Enter your name (or any word) to get your cyber alias.</p>
+
+    <!-- Input field -->
+    <input id="nameInput" type="text" placeholder="e.g. John Doe"
+           class="w-full p-4 bg-black border border-green-800 rounded-xl text-green-400 text-lg focus:ring-2 focus:ring-green-600 outline-none">
+
+    <!-- Generate button -->
+    <button id="generateBtn" class="w-full mt-4 bg-green-700 hover:bg-green-600 text-black font-bold py-4 rounded-xl text-lg shadow-lg transition">
+        GENERATE
+    </button>
+
+    <!-- Result area (hidden initially) -->
+    <div id="resultArea" class="mt-6 hidden">
+        <div class="bg-black border border-green-800 p-6 rounded-xl text-center">
+            <p class="text-green-400 text-xs uppercase tracking-widest mb-1">Your alias</p>
+            <p id="hackerName" class="text-3xl font-bold text-green-300 glitch-text"></p>
+        </div>
+        <div class="flex gap-3 mt-4">
+            <button id="copyBtn" class="flex-1 bg-zinc-900 text-green-400 py-3 rounded-xl text-sm border border-green-900">📋 Copy</button>
+            <button id="shareBtn" class="flex-1 bg-green-800 text-black py-3 rounded-xl text-sm font-medium">📤 Share</button>
+        </div>
+
+        <!-- Embed this tool section -->
+        <div class="mt-6 p-3 bg-zinc-900 rounded-xl border border-zinc-800 text-center">
+            <p class="text-xs text-zinc-500 mb-2">Want this tool on your site?</p>
+            <textarea readonly id="embedCode" class="w-full h-12 p-2 bg-black border border-zinc-700 rounded-lg text-xs text-green-400 font-mono mb-2">&lt;iframe src="https://mobifactory.pages.dev/tools/hacker-name.html" width="100%" height="400" frameborder="0"&gt;&lt;/iframe&gt;</textarea>
+            <button onclick="copyEmbed()" class="bg-green-700 text-white px-4 py-1 rounded-lg text-xs font-bold">📋 Copy Embed Code</button>
+        </div>
+    </div>
+
+    <script>
+        // Arrays for generating aliases
+        const prefixes = ["Zero", "Neo", "Cipher", "Phantom", "Ghost", "Shadow", "N3M3S1S", "K1LL3R", "Byte", "Root"];
+        const suffixes = ["Byte", "Root", "Shell", "Kode", "Hack", "Crash", "Override", "Eyes", "Vision", "Net"];
+
+        // Generate alias on button click
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            const name = document.getElementById('nameInput').value.trim();
+            // Randomly pick a prefix and suffix (not dependent on input for simplicity)
+            const p = prefixes[Math.floor(Math.random() * prefixes.length)];
+            const s = suffixes[Math.floor(Math.random() * suffixes.length)];
+            const alias = p + "_" + s;
+            document.getElementById('hackerName').innerText = alias;
+            document.getElementById('resultArea').classList.remove('hidden');
+        });
+
+        // Copy alias
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            const alias = document.getElementById('hackerName').innerText;
+            navigator.clipboard.writeText(alias).then(() => {
+                alert('Alias copied!');
+            }).catch(() => {
+                // Fallback: select text manually (for older browsers)
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = alias;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTextArea);
+                alert('Alias copied!');
+            });
+        });
+
+        // Share using Web Share API
+        document.getElementById('shareBtn').addEventListener('click', function() {
+            const alias = document.getElementById('hackerName').innerText;
+            const url = window.location.href;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'My Hacker Alias',
+                    text: `My hacker alias is ${alias}! Find yours:`,
+                    url: url
+                }).catch(() => {});
+            } else {
+                // Fallback: copy alias + link
+                const textToCopy = alias + " " + url;
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    alert('Link & alias copied! Share it manually.');
+                }).catch(() => {
+                    const tempTextArea = document.createElement('textarea');
+                    tempTextArea.value = textToCopy;
+                    document.body.appendChild(tempTextArea);
+                    tempTextArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempTextArea);
+                    alert('Link & alias copied! Share it manually.');
+                });
+            }
+        });
+
+        // Copy the embed code
+        function copyEmbed() {
+            const code = document.getElementById('embedCode');
+            code.select();
+            code.setSelectionRange(0, 99999); // For mobile compatibility
+            navigator.clipboard.writeText(code.value).then(() => {
+                alert('Embed code copied! Paste it on your site.');
+            }).catch(() => {
+                // Fallback
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = code.value;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTextArea);
+                alert('Embed code copied! Paste it on your site.');
+            });
+        }
+    </script>
+</body>
+</html>
