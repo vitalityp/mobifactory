@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mobifactory.pages.dev/sitemap.xml
