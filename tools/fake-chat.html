@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Fake iMessage Chat | Embed Factory</title>
+    <meta name="description" content="Create realistic fake iMessage screenshots for pranks. Embed this free tool.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0f0f0f; color: #f1f5f9; font-family: system-ui, -apple-system, sans-serif; }
+        .chat-bubble { background: #1c1c1e; border-radius: 20px; }
+    </style>
+</head>
+<body class="p-4 max-w-md mx-auto">
+    <div class="flex items-center gap-2 mb-6">
+        <a href="https://mobifactory.pages.dev" class="text-2xl text-gray-400">←</a>
+        <h1 class="text-2xl font-bold tracking-tight text-blue-400">💬 Fake iMessage</h1>
+    </div>
+    <p class="text-zinc-400 text-sm mb-4">Customize sender, message, and status. Screenshot to share.</p>
+
+    <!-- Input fields -->
+    <label class="block text-xs text-zinc-500 mb-1">Sender Name</label>
+    <input id="senderName" type="text" value="Mom" class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white mb-3">
+
+    <label class="block text-xs text-zinc-500 mb-1">Message</label>
+    <input id="messageText" type="text" value="Where are you?" class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white mb-3">
+
+    <label class="block text-xs text-zinc-500 mb-1">Status</label>
+    <select id="statusSelect" class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white mb-4">
+        <option value="Delivered">Delivered</option>
+        <option value="Read" selected>Read</option>
+        <option value="Sent">Sent</option>
+    </select>
+
+    <!-- Preview card -->
+    <div id="chatPreview" class="bg-[#1c1c1e] p-4 rounded-2xl border border-zinc-800">
+        <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg">S</div>
+            <div class="flex-1">
+                <div class="flex items-baseline gap-2">
+                    <span id="previewSender" class="font-semibold text-white">Mom</span>
+                    <span class="text-xs text-zinc-500">iMessage</span>
+                </div>
+                <p id="previewMessage" class="text-white mt-1">Where are you?</p>
+                <p id="previewStatus" class="text-xs text-zinc-400 mt-1">Read</p>
+            </div>
+        </div>
+    </div>
+
+    <p class="text-zinc-500 text-xs mt-4 text-center">📸 Take a screenshot and share the prank!</p>
+
+    <!-- Embed this tool section -->
+    <div class="mt-6 p-3 bg-zinc-900 rounded-xl border border-zinc-800 text-center">
+        <p class="text-xs text-zinc-500 mb-2">Want this tool on your site?</p>
+        <textarea readonly id="embedCode" class="w-full h-12 p-2 bg-black border border-zinc-700 rounded-lg text-xs text-green-400 font-mono mb-2">&lt;iframe src="https://mobifactory.pages.dev/tools/fake-chat.html" width="100%" height="400" frameborder="0"&gt;&lt;/iframe&gt;</textarea>
+        <button onclick="copyEmbed()" class="bg-green-700 text-white px-4 py-1 rounded-lg text-xs font-bold">📋 Copy Embed Code</button>
+    </div>
+
+    <script>
+        // Live preview update
+        const senderInp = document.getElementById('senderName');
+        const msgInp = document.getElementById('messageText');
+        const statusSel = document.getElementById('statusSelect');
+        const previewSender = document.getElementById('previewSender');
+        const previewMsg = document.getElementById('previewMessage');
+        const previewStatus = document.getElementById('previewStatus');
+
+        function updatePreview() {
+            previewSender.innerText = senderInp.value || "Mom";
+            previewMsg.innerText = msgInp.value || "Where are you?";
+            previewStatus.innerText = statusSel.value;
+            // Update avatar initial
+            const initial = (senderInp.value || "S")[0].toUpperCase();
+            document.querySelector('.bg-blue-600').innerText = initial;
+        }
+        senderInp.addEventListener('input', updatePreview);
+        msgInp.addEventListener('input', updatePreview);
+        statusSel.addEventListener('change', updatePreview);
+        updatePreview();
+
+        // Copy embed code
+        function copyEmbed() {
+            const code = document.getElementById('embedCode');
+            code.select();
+            code.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(code.value).then(() => {
+                alert('Embed code copied! Paste it on your site.');
+            }).catch(() => {
+                alert('Failed to copy. Please manually copy the code.');
+            });
+        }
+    </script>
+</body>
+</html>
