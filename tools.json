@@ -26,5 +26,12 @@
   "icon": "📄",
   "description": "Generate a smart freelance agreement",
   "embedId": "contract-craft"
+},
+{
+  "name": "Tax Calculator",
+  "file": "/tools/tax-calculator.html",
+  "icon": "💰",
+  "description": "Estimate your freelance tax reserve",
+  "embedId": "tax-calculator"
 }
 ]
