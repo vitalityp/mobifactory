@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Freelancer Tax Calculator | Embed Factory</title>
+    <meta name="description" content="Estimate how much tax you need to save as a Pakistani freelancer. Free, no signup.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0f0f0f; color: #f1f5f9; font-family: system-ui, sans-serif; }
+        .result-highlight { background: #1e293b; border-left: 4px solid #38bdf8; }
+    </style>
+</head>
+<body class="p-4 max-w-lg mx-auto">
+    <div class="flex items-center gap-2 mb-6">
+        <a href="https://mobifactory.pages.dev" class="text-2xl text-gray-400">←</a>
+        <h1 class="text-2xl font-bold tracking-tight text-sky-400">💰 Tax Reserve Calculator</h1>
+    </div>
+    <p class="text-zinc-400 text-sm mb-4">Enter your monthly freelance income. We’ll estimate how much you should keep aside for tax.</p>
+
+    <!-- Input Area -->
+    <div class="space-y-3 mb-6">
+        <div>
+            <label class="block text-xs text-zinc-500 mb-1">Your Average Monthly Income (PKR)</label>
+            <input id="monthlyIncome" type="number" placeholder="e.g. 150000" class="w-full p-4 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-lg focus:ring-2 focus:ring-sky-600 outline-none">
+        </div>
+        <div>
+            <label class="block text-xs text-zinc-500 mb-1">Your Profession</label>
+            <select id="profession" class="w-full p-4 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-lg focus:ring-2 focus:ring-sky-600 outline-none">
+                <option value="freelancer">Freelancer / IT Exporter</option>
+                <option value="other">Other / General</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Calculate Button -->
+    <button id="calculateBtn" class="w-full bg-sky-700 hover:bg-sky-600 text-white font-bold py-4 rounded-xl text-lg shadow-lg transition">
+        🔍 Calculate Tax Reserve
+    </button>
+
+    <!-- Result Area (hidden initially) -->
+    <div id="resultArea" class="mt-6 hidden">
+        <div class="result-highlight p-5 rounded-xl text-sm leading-relaxed text-gray-200">
+            <div class="text-center mb-3">
+                <p class="text-xs text-sky-400 uppercase tracking-widest">Estimated Annual Tax Liability</p>
+                <p class="text-4xl font-bold text-white mt-2"><span id="outputTax"></span> PKR</p>
+                <p class="text-xs text-zinc-500 mt-1">Approximate amount to save</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-4 text-xs">
+                <div class="bg-black/30 p-2 rounded-lg">
+                    <span class="text-zinc-500">Monthly Set-Aside</span>
+                    <p class="font-bold text-white" id="outputMonthly"></p>
+                </div>
+                <div class="bg-black/30 p-2 rounded-lg">
+                    <span class="text-zinc-500">Effective Rate</span>
+                    <p class="font-bold text-white" id="outputRate"></p>
+                </div>
+            </div>
+            <div class="mt-4 border-t border-gray-700 pt-3 text-xs text-gray-400">
+                <p><strong>How it's calculated:</strong> Based on Pakistan's progressive income tax slabs (2025). Includes 1% presumptive tax for IT exporters where applicable. <em class="text-red-400">This is an estimate, not legal advice.</em></p>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-3 mt-4">
+            <button id="copyResultBtn" class="flex-1 bg-zinc-800 text-white py-3 rounded-xl text-sm font-medium border border-zinc-700">📋 Copy Summary</button>
+            <button id="shareResultBtn" class="flex-1 bg-blue-600 text-white py-3 rounded-xl text-sm font-medium">📤 Share</button>
+        </div>
+
+        <!-- Conversion Hook (Subtle, professional wording) -->
+        <div class="mt-5 text-center border-t border-zinc-800 pt-4">
+            <p class="text-xs text-zinc-500">Need help managing your freelance taxes?</p>
+            <a href="/offer.html" class="inline-block mt-2 bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 px-6 rounded-full text-sm transition">
+                ✨ Get Your Custom Tool — Starting at $50
+            </a>
+        </div>
+
+        <!-- Embed this tool section -->
+        <div class="mt-6 p-3 bg-zinc-900 rounded-xl border border-zinc-800 text-center">
+            <p class="text-xs text-zinc-500 mb-2">Embed this calculator on your site</p>
+            <textarea readonly id="embedCode" class="w-full h-12 p-2 bg-black border border-zinc-700 rounded-lg text-xs text-green-400 font-mono mb-2">&lt;iframe src="https://mobifactory.pages.dev/tools/tax-calculator.html" width="100%" height="400" frameborder="0"&gt;&lt;/iframe&gt;</textarea>
+            <button onclick="copyEmbed()" class="bg-green-700 text-white px-4 py-1 rounded-lg text-xs font-bold">📋 Copy Embed Code</button>
+        </div>
+    </div>
+
+    <script>
+        // Progressive tax slabs for individuals (approximate 2025 Pakistan)
+        function calculateTax(annualIncome, isFreelancer) {
+            // IT exporters (freelancers) often benefit from 1% presumptive tax regime
+            if (isFreelancer && annualIncome <= 2400000) {
+                // Simplified: 1% presumptive tax on turnover
+                return Math.round(annualIncome * 0.01);
+            }
+            // General progressive calculation
+            let tax = 0;
+            if (annualIncome <= 600000) {
+                tax = 0;
+            } else if (annualIncome <= 1200000) {
+                tax = (annualIncome - 600000) * 0.05;
+            } else if (annualIncome <= 2200000) {
+                tax = 30000 + (annualIncome - 1200000) * 0.15;
+            } else if (annualIncome <= 3200000) {
+                tax = 180000 + (annualIncome - 2200000) * 0.25;
+            } else if (annualIncome <= 4100000) {
+                tax = 430000 + (annualIncome - 3200000) * 0.30;
+            } else {
+                tax = 790000 + (annualIncome - 4100000) * 0.35;
+            }
+            return Math.round(tax);
+        }
+
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const monthly = parseFloat(document.getElementById('monthlyIncome').value);
+            const profession = document.getElementById('profession').value;
+            if (isNaN(monthly) || monthly <= 0) {
+                alert('Please enter a valid monthly income.');
+                return;
+            }
+            const annual = monthly * 12;
+            const isFreelancer = profession === 'freelancer';
+            const annualTax = calculateTax(annual, isFreelancer);
+            const monthlyTax = Math.round(annualTax / 12);
+            const effectiveRate = ((annualTax / annual) * 100).toFixed(1);
+
+            document.getElementById('outputTax').innerText = annualTax.toLocaleString('en-PK');
+            document.getElementById('outputMonthly').innerText = monthlyTax.toLocaleString('en-PK') + ' PKR/mo';
+            document.getElementById('outputRate').innerText = effectiveRate + '%';
+
+            document.getElementById('resultArea').classList.remove('hidden');
+            document.getElementById('resultArea').scrollIntoView({behavior: 'smooth'});
+        });
+
+        document.getElementById('copyResultBtn').addEventListener('click', function() {
+            const text = document.querySelector('.result-highlight').innerText;
+            navigator.clipboard.writeText(text).then(() => alert('Tax summary copied!'))
+            .catch(() => alert('Copy failed. Please select and copy manually.'));
+        });
+
+        document.getElementById('shareResultBtn').addEventListener('click', function() {
+            const text = document.querySelector('.result-highlight').innerText;
+            if (navigator.share) {
+                navigator.share({ title: 'My Tax Estimate', text: text, url: window.location.href }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(text + '\n\nCalculated by Embed Factory: ' + window.location.href);
+                alert('Summary and link copied!');
+            }
+        });
+
+        function copyEmbed() {
+            const code = document.getElementById('embedCode');
+            code.select();
+            code.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(code.value).then(() => alert('Embed code copied!'))
+            .catch(() => alert('Copy failed.'));
+        }
+    </script>
+</body>
+</html>
