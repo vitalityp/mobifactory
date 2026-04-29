@@ -19,5 +19,12 @@
     "icon": "💬",
     "description": "Create realistic prank screenshots",
     "embedId": "fake-chat"
-  }
+  },
+{
+  "name": "ContractCraft",
+  "file": "/tools/contract-craft.html",
+  "icon": "📄",
+  "description": "Generate a smart freelance agreement",
+  "embedId": "contract-craft"
+}
 ]
