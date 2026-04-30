@@ -33,5 +33,12 @@
   "icon": "💰",
   "description": "Estimate your freelance tax reserve",
   "embedId": "tax-calculator"
+},
+{
+  "name": "Invoice Generator",
+  "file": "/tools/invoice-generator.html",
+  "icon": "🧾",
+  "description": "Create a professional freelance invoice",
+  "embedId": "invoice-generator"
 }
 ]
