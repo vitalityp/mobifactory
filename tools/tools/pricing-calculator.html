@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Free Freelance Pricing Calculator (No Signup) | Embed Factory</title>
+    <meta name="description" content="Calculate the right price for your freelance project. Quick, free, and mobile-friendly.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0f0f0f; color: #f1f5f9; font-family: system-ui, sans-serif; }
+        .result-highlight { background: #1e293b; border-left: 4px solid #fbbf24; }
+    </style>
+</head>
+<body class="p-4 max-w-lg mx-auto">
+    <div class="flex items-center gap-2 mb-6">
+        <a href="https://mobifactory.pages.dev" class="text-2xl text-gray-400">←</a>
+        <h1 class="text-2xl font-bold tracking-tight text-yellow-400">💰 Pricing Calculator</h1>
+    </div>
+    <p class="text-zinc-400 text-sm mb-4">Get a data-backed price suggestion for your next freelance project.</p>
+    <div class="space-y-3 mb-6">
+        <div>
+            <label class="block text-xs text-zinc-500 mb-1">Project Type</label>
+            <select id="projectType" class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white">
+                <option value="website">Website Design</option>
+                <option value="app">Mobile App</option>
+                <option value="logo">Logo & Branding</option>
+                <option value="content">Content Writing</option>
+                <option value="other">Other / General</option>
+            </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <label class="block text-xs text-zinc-500 mb-1">Estimated Hours</label>
+                <input id="hours" type="number" value="20" class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white">
+            </div>
+            <div>
+                <label class="block text-xs text-zinc-500 mb-1">Your Hourly Rate ($)</label>
+                <input id="hourlyRate" type="number" value="25" class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white">
+            </div>
+        </div>
+    </div>
+    <button id="calculateBtn" class="w-full bg-yellow-700 hover:bg-yellow-600 text-white font-bold py-4 rounded-xl text-lg shadow-lg transition">
+        🔍 Calculate Suggested Price
+    </button>
+    <div id="resultArea" class="mt-6 hidden">
+        <div class="result-highlight p-5 rounded-xl text-sm text-gray-200">
+            <div class="text-center mb-3">
+                <p class="text-xs text-yellow-400 uppercase tracking-widest">Suggested Project Price</p>
+                <p class="text-4xl font-bold text-white mt-2">$<span id="outputPrice"></span></p>
+                <p class="text-xs text-zinc-500 mt-1">Based on <span id="outputType"></span> project</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-4 text-xs">
+                <div class="bg-black/30 p-2 rounded-lg">
+                    <span class="text-zinc-500">Labor Cost</span>
+                    <p class="font-bold text-white" id="outputLabor"></p>
+                </div>
+                <div class="bg-black/30 p-2 rounded-lg">
+                    <span class="text-zinc-500">Market Adjustment</span>
+                    <p class="font-bold text-white" id="outputAdjustment"></p>
+                </div>
+            </div>
+            <p class="text-xs text-gray-400 mt-3">This estimate includes a complexity multiplier and market factor. Always adjust based on client value.</p>
+        </div>
+        <div class="flex gap-3 mt-4">
+            <button id="copyResultBtn" class="flex-1 bg-zinc-800 text-white py-3 rounded-xl text-sm font-medium border border-zinc-700">📋 Copy Summary</button>
+            <button id="shareResultBtn" class="flex-1 bg-blue-600 text-white py-3 rounded-xl text-sm font-medium">📤 Share</button>
+        </div>
+
+        <!-- CTA (since this is the last tool in the flow) -->
+        <div class="mt-5 text-center border-t border-zinc-800 pt-5">
+            <p class="text-xs text-zinc-500">Confidently price your projects? Let’s build your custom toolkit.</p>
+            <a href="/offer.html" class="inline-block mt-3 bg-purple-700 hover:bg-purple-800 text-white font-bold py-3 px-8 rounded-full text-base shadow-lg transition">
+                ✨ Get Your Custom Tool — Starting at $50
+            </a>
+        </div>
+
+        <div class="mt-6 p-3 bg-zinc-900 rounded-xl border border-zinc-800 text-center">
+            <p class="text-xs text-zinc-500 mb-2">Embed this pricing calculator on your site</p>
+            <textarea readonly id="embedCode" class="w-full h-12 p-2 bg-black border border-zinc-700 rounded-lg text-xs text-green-400 font-mono mb-2">&lt;iframe src="https://mobifactory.pages.dev/tools/pricing-calculator.html" width="100%" height="400" frameborder="0"&gt;&lt;/iframe&gt;</textarea>
+            <button onclick="copyEmbed()" class="bg-green-700 text-white px-4 py-1 rounded-lg text-xs font-bold">📋 Copy Embed Code</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const type = document.getElementById('projectType').value;
+            const hours = parseFloat(document.getElementById('hours').value);
+            const rate = parseFloat(document.getElementById('hourlyRate').value);
+            if (isNaN(hours) || isNaN(rate) || hours <= 0 || rate <= 0) {
+                alert('Please enter valid hours and rate.');
+                return;
+            }
+            const laborCost = hours * rate;
+            const multipliers = {
+                website: 1.4,
+                app: 1.8,
+                logo: 1.2,
+                content: 1.0,
+                other: 1.3
+            };
+            const multiplier = multipliers[type] || 1.3;
+            const suggestedPrice = Math.round(laborCost * multiplier);
+            const adjustment = Math.round(suggestedPrice - laborCost);
+            document.getElementById('outputPrice').innerText = suggestedPrice;
+            document.getElementById('outputType').innerText = type.charAt(0).toUpperCase() + type.slice(1);
+            document.getElementById('outputLabor').innerText = '$' + laborCost;
+            document.getElementById('outputAdjustment').innerText = '$' + adjustment + ' (x' + multiplier + ')';
+            document.getElementById('resultArea').classList.remove('hidden');
+            document.getElementById('resultArea').scrollIntoView({behavior: 'smooth'});
+        });
+        document.getElementById('copyResultBtn').addEventListener('click', function() {
+            const text = document.querySelector('.result-highlight').innerText;
+            navigator.clipboard.writeText(text).then(() => alert('Pricing summary copied!'))
+            .catch(() => alert('Copy failed.'));
+        });
+        document.getElementById('shareResultBtn').addEventListener('click', function() {
+            const text = document.querySelector('.result-highlight').innerText;
+            if (navigator.share) {
+                navigator.share({ title: 'Project Price Estimate', text: text, url: window.location.href }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(text + '\n\nGenerated by Embed Factory: ' + window.location.href);
+                alert('Summary and link copied!');
+            }
+        });
+        function copyEmbed() {
+            const code = document.getElementById('embedCode');
+            code.select();
+            code.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(code.value).then(() => alert('Embed code copied!'))
+            .catch(() => alert('Copy failed.'));
+        }
+    </script>
+</body>
+</html>
