@@ -17,8 +17,6 @@
         <h1 class="text-2xl font-bold tracking-tight text-amber-400">🧾 Invoice Generator</h1>
     </div>
     <p class="text-zinc-400 text-sm mb-4">Fill in the details to generate a clean, professional invoice.</p>
-
-    <!-- Input Area -->
     <div class="space-y-3 mb-6">
         <div class="grid grid-cols-2 gap-3">
             <div>
@@ -49,13 +47,9 @@
             <input id="taxPercent" type="number" value="0" class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white">
         </div>
     </div>
-
-    <!-- Generate Button -->
     <button id="generateBtn" class="w-full bg-amber-700 hover:bg-amber-600 text-white font-bold py-4 rounded-xl text-lg shadow-lg transition">
         ✨ Generate Invoice
     </button>
-
-    <!-- Invoice Output (hidden initially) -->
     <div id="invoiceArea" class="mt-6 hidden">
         <div class="invoice-box p-5 rounded-2xl text-sm leading-relaxed text-gray-200">
             <div class="text-center mb-4 border-b border-gray-700 pb-3">
@@ -99,32 +93,33 @@
             <p class="text-xs text-gray-400 mt-3">Payment due within 15 days. Please include invoice number with payment.</p>
             <p class="text-xs text-red-400 mt-1">⚠️ This is a simplified template; consult an accountant for tax compliance.</p>
         </div>
-
-        <!-- Action Buttons -->
         <div class="flex gap-3 mt-4">
             <button id="copyInvoiceBtn" class="flex-1 bg-zinc-800 text-white py-3 rounded-xl text-sm font-medium border border-zinc-700">📋 Copy Text</button>
             <button id="shareInvoiceBtn" class="flex-1 bg-blue-600 text-white py-3 rounded-xl text-sm font-medium">📤 Share</button>
         </div>
 
+        <!-- Next Step Link -->
+        <div class="text-center mt-5 border-t border-zinc-800 pt-5">
+            <p class="text-xs text-zinc-400">💰 Next — Calculate how much tax to reserve</p>
+            <a href="/tools/tax-calculator.html" class="inline-block mt-2 text-sky-400 font-semibold text-sm hover:text-sky-300 hover:underline">🧮 Tax Calculator →</a>
+        </div>
+
         <!-- Conversion Hook -->
-        <div class="mt-5 text-center border-t border-zinc-800 pt-4">
+        <div class="mt-5 text-center border-t border-zinc-800 pt-5">
             <p class="text-xs text-zinc-500">Need a custom invoice or bookkeeping tool?</p>
-            <a href="/offer.html" class="inline-block mt-2 bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 px-6 rounded-full text-sm transition">
+            <a href="/offer.html" class="inline-block mt-3 bg-purple-700 hover:bg-purple-800 text-white font-bold py-3 px-8 rounded-full text-base shadow-lg transition">
                 ✨ Get Your Custom Tool — Starting at $50
             </a>
         </div>
 
-        <!-- Embed this tool -->
         <div class="mt-6 p-3 bg-zinc-900 rounded-xl border border-zinc-800 text-center">
             <p class="text-xs text-zinc-500 mb-2">Embed this invoice generator on your site</p>
             <textarea readonly id="embedCode" class="w-full h-12 p-2 bg-black border border-zinc-700 rounded-lg text-xs text-green-400 font-mono mb-2">&lt;iframe src="https://mobifactory.pages.dev/tools/invoice-generator.html" width="100%" height="400" frameborder="0"&gt;&lt;/iframe&gt;</textarea>
             <button onclick="copyEmbed()" class="bg-green-700 text-white px-4 py-1 rounded-lg text-xs font-bold">📋 Copy Embed Code</button>
         </div>
     </div>
-
     <script>
         document.getElementById('invDate').innerText = new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
-
         document.getElementById('generateBtn').addEventListener('click', function() {
             const from = document.getElementById('fromName').value.trim();
             const client = document.getElementById('clientName').value.trim();
@@ -132,16 +127,13 @@
             const qty = parseFloat(document.getElementById('quantity').value);
             const rate = parseFloat(document.getElementById('rate').value);
             const taxPct = parseFloat(document.getElementById('taxPercent').value);
-
             if (!from || !client || !service || isNaN(qty) || isNaN(rate)) {
                 alert('Please fill in all required fields (from, client, service, quantity, rate).');
                 return;
             }
-
             const amount = qty * rate;
             const taxAmount = amount * (taxPct / 100);
             const total = amount + taxAmount;
-
             document.getElementById('invFrom').innerText = from;
             document.getElementById('invClient').innerText = client;
             document.getElementById('invService').innerText = service;
@@ -152,17 +144,14 @@
             document.getElementById('invTaxPercent').innerText = taxPct;
             document.getElementById('invTax').innerText = taxAmount.toFixed(2);
             document.getElementById('invTotal').innerText = total.toFixed(2);
-
             document.getElementById('invoiceArea').classList.remove('hidden');
             document.getElementById('invoiceArea').scrollIntoView({behavior: 'smooth'});
         });
-
         document.getElementById('copyInvoiceBtn').addEventListener('click', function() {
             const text = document.querySelector('.invoice-box').innerText;
             navigator.clipboard.writeText(text).then(() => alert('Invoice text copied!'))
             .catch(() => alert('Copy failed. Please manually copy.'));
         });
-
         document.getElementById('shareInvoiceBtn').addEventListener('click', function() {
             const text = document.querySelector('.invoice-box').innerText;
             if (navigator.share) {
@@ -172,7 +161,6 @@
                 alert('Invoice text and link copied!');
             }
         });
-
         function copyEmbed() {
             const code = document.getElementById('embedCode');
             code.select();
@@ -182,4 +170,4 @@
         }
     </script>
 </body>
-  </html>
+</html>
