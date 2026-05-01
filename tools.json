@@ -40,5 +40,19 @@
   "icon": "🧾",
   "description": "Create a professional freelance invoice",
   "embedId": "invoice-generator"
+},
+{
+  "name": "Proposal Generator",
+  "file": "/tools/proposal-generator.html",
+  "icon": "📝",
+  "description": "Create a professional project proposal",
+  "embedId": "proposal-generator"
+},
+{
+  "name": "Pricing Calculator",
+  "file": "/tools/pricing-calculator.html",
+  "icon": "💰",
+  "description": "Calculate the right price for your project",
+  "embedId": "pricing-calculator"
 }
 ]
