@@ -75,5 +75,12 @@
   "icon": "🏗️",
   "description": "Generate starter code for new tools",
   "embedId": "asset-builder"
+},
+{
+  "name": "Distribution Engine",
+  "file": "/tools/distribution-engine.html",
+  "icon": "📣",
+  "description": "Generate ready-to-post social media copy",
+  "embedId": "distribution-engine"
 }
 ]
