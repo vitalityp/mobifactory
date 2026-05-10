@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Freelance Rate Optimizer | Embed Factory</title>
+    <meta name="description" content="Calculate your ideal hourly rate based on desired monthly income, taxes, and expenses.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0f0f0f; color: #f1f5f9; font-family: system-ui, sans-serif; }
+    </style>
+</head>
+<body class="p-4 max-w-lg mx-auto">
+    <div class="flex items-center gap-2 mb-6">
+        <a href="https://mobifactory.pages.dev" class="text-2xl text-gray-400">←</a>
+        <h1 class="text-2xl font-bold tracking-tight text-indigo-400">⚡ Rate Optimizer</h1>
+    </div>
+    <p class="text-zinc-400 text-sm mb-4">Find the hourly rate you need to hit your income goals.</p>
+
+    <div class="space-y-3 mb-6">
+        <div>
+            <label class="block text-xs text-zinc-500 mb-1">Desired Monthly Income ($)</label>
+            <input id="desiredIncome" type="number" value="3000" class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <label class="block text-xs text-zinc-500 mb-1">Tax Rate (%)</label>
+                <input id="taxRate" type="number" value="15" class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white">
+            </div>
+            <div>
+                <label class="block text-xs text-zinc-500 mb-1">Monthly Expenses ($)</label>
+                <input id="expenses" type="number" value="500" class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white">
+            </div>
+        </div>
+        <div>
+            <label class="block text-xs text-zinc-500 mb-1">Billable Hours per Week</label>
+            <input id="billableHours" type="number" value="25" class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white">
+        </div>
+    </div>
+
+    <button id="calculateBtn" class="w-full bg-indigo-700 hover:bg-indigo-600 text-white font-bold py-4 rounded-xl text-lg shadow-lg transition">
+        🔍 Calculate My Rate
+    </button>
+
+    <div id="resultArea" class="mt-6 hidden">
+        <div class="bg-indigo-900/30 border border-indigo-700 p-5 rounded-2xl text-center">
+            <p class="text-xs text-indigo-300 uppercase tracking-widest">Your Minimum Hourly Rate</p>
+            <p class="text-5xl font-bold text-white mt-2">$<span id="outputRate"></span></p>
+            <p class="text-xs text-zinc-400 mt-1">to reach your goal after tax & expenses</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mt-4 text-xs">
+            <div class="bg-zinc-900 p-3 rounded-xl border border-zinc-800 text-center">
+                <span class="text-zinc-500">Monthly Target (pre-tax)</span>
+                <p class="font-bold text-white mt-1" id="outputGross"></p>
+            </div>
+            <div class="bg-zinc-900 p-3 rounded-xl border border-zinc-800 text-center">
+                <span class="text-zinc-500">Per Project (10h)</span>
+                <p class="font-bold text-white mt-1" id="outputProject"></p>
+            </div>
+        </div>
+
+        <!-- Lead Capture -->
+        <div class="mt-5 p-3 bg-gradient-to-r from-purple-900/40 to-zinc-900 rounded-xl border border-purple-700/50 text-center">
+            <p class="text-xs text-purple-300 font-semibold mb-2">📥 Get Free Freelance Templates + Updates</p>
+            <a href="mailto:pulsevitality192@gmail.com?subject=Send%20me%20the%20free%20templates&body=Hi%2C%20please%20send%20me%20the%20free%20template%20pack.%20My%20email%20is%20%5Benter%20your%20email%5D" class="inline-block bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 px-6 rounded-full text-sm shadow-md transition">
+                📬 Send Me Free Templates
+            </a>
+        </div>
+
+        <!-- CTA -->
+        <div class="mt-5 text-center border-t border-zinc-800 pt-5">
+            <p class="text-xs text-zinc-500">Need a custom pricing tool for your business?</p>
+            <a href="/offer.html" class="inline-block mt-3 bg-purple-700 hover:bg-purple-800 text-white font-bold py-3 px-8 rounded-full text-base shadow-lg transition">
+                ✨ Get Your Custom Tool — Starting at $50
+            </a>
+        </div>
+
+        <div class="mt-6 p-3 bg-zinc-900 rounded-xl border border-zinc-800 text-center">
+            <p class="text-xs text-zinc-500 mb-2">Embed this calculator on your site</p>
+            <textarea readonly class="w-full h-12 p-2 bg-black border border-zinc-700 rounded-lg text-xs text-green-400 font-mono mb-2">&lt;iframe src="https://mobifactory.pages.dev/tools/rate-optimizer.html" width="100%" height="400" frameborder="0"&gt;&lt;/iframe&gt;</textarea>
+            <button onclick="navigator.clipboard.writeText(this.previousElementSibling.value);alert('Embed code copied!')" class="bg-green-700 text-white px-4 py-1 rounded-lg text-xs font-bold">📋 Copy Embed Code</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const income = parseFloat(document.getElementById('desiredIncome').value);
+            const tax = parseFloat(document.getElementById('taxRate').value);
+            const expenses = parseFloat(document.getElementById('expenses').value);
+            const hours = parseFloat(document.getElementById('billableHours').value);
+
+            if (isNaN(income) || isNaN(tax) || isNaN(expenses) || isNaN(hours) || hours <= 0) {
+                alert('Please fill all fields correctly.');
+                return;
+            }
+
+            const grossMonthly = income / (1 - tax / 100) + expenses;
+            const weeklyHours = hours;
+            const monthlyHours = weeklyHours * 4.33;
+            const rate = grossMonthly / monthlyHours;
+            const projectPrice = rate * 10;
+
+            document.getElementById('outputRate').innerText = rate.toFixed(2);
+            document.getElementById('outputGross').innerText = '$' + grossMonthly.toFixed(2);
+            document.getElementById('outputProject').innerText = '$' + projectPrice.toFixed(2);
+            document.getElementById('resultArea').classList.remove('hidden');
+            document.getElementById('resultArea').scrollIntoView({behavior: 'smooth'});
+        });
+    </script>
+</body>
+</html>
