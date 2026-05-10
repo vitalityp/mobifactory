@@ -54,5 +54,12 @@
   "icon": "💰",
   "description": "Calculate the right price for your project",
   "embedId": "pricing-calculator"
+},
+{
+  "name": "Rate Optimizer",
+  "file": "/tools/rate-optimizer.html",
+  "icon": "⚡",
+  "description": "Find your ideal freelance hourly rate",
+  "embedId": "rate-optimizer"
 }
 ]
