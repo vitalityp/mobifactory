@@ -62,79 +62,78 @@
             return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
         }
 
+        function buildHTML(name, icon, desc, slug) {
+            var seoTitle = 'Free ' + name + ' (No Signup) | Embed Factory';
+            var seoDesc = desc + '. Free, fast, and mobile-friendly.';
+            var html = '<!DOCTYPE html>\n';
+            html += '<html lang="en">\n<head>\n';
+            html += '    <meta charset="UTF-8">\n';
+            html += '    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">\n';
+            html += '    <title>' + seoTitle + '</title>\n';
+            html += '    <meta name="description" content="' + seoDesc + '">\n';
+            html += '    <script src="https://cdn.tailwindcss.com"><\/script>\n';
+            html += '    <style>\n';
+            html += '        body { background: #0f0f0f; color: #f1f5f9; font-family: system-ui, sans-serif; }\n';
+            html += '    </style>\n';
+            html += '</head>\n<body class="p-4 max-w-lg mx-auto">\n';
+            html += '    <div class="flex items-center gap-2 mb-6">\n';
+            html += '        <a href="https://mobifactory.pages.dev" class="text-2xl text-gray-400">←</a>\n';
+            html += '        <h1 class="text-2xl font-bold tracking-tight">' + icon + ' ' + name + '</h1>\n';
+            html += '    </div>\n';
+            html += '    <p class="text-zinc-400 text-sm mb-4">' + desc + '.</p>\n';
+            html += '    <!-- Add your tool logic here -->\n';
+            html += '    <div class="text-center text-zinc-500 text-sm mt-8">✨ Your tool content goes here.</div>\n';
+            html += '    <div class="mt-6 p-3 bg-zinc-900 rounded-xl border border-zinc-800 text-center">\n';
+            html += '        <p class="text-xs text-zinc-500 mb-2">Embed this tool on your site</p>\n';
+            html += '        <textarea readonly class="w-full h-12 p-2 bg-black border border-zinc-700 rounded-lg text-xs text-green-400 font-mono mb-2">&lt;iframe src="https://mobifactory.pages.dev/tools/' + slug + '.html" width="100%" height="400" frameborder="0"&gt;&lt;/iframe&gt;</textarea>\n';
+            html += '        <button onclick="navigator.clipboard.writeText(this.previousElementSibling.value);alert(\'Embed code copied!\')" class="bg-green-700 text-white px-4 py-1 rounded-lg text-xs font-bold">📋 Copy Embed Code</button>\n';
+            html += '    </div>\n';
+            html += '    <script src="/router.js"><\/script>\n';
+            html += '</body>\n</html>';
+            return html;
+        }
+
+        function buildJSON(name, slug, icon, desc) {
+            var json = '  ,\n';
+            json += '  {\n';
+            json += '    "name": "' + name + '",\n';
+            json += '    "file": "/tools/' + slug + '.html",\n';
+            json += '    "icon": "' + icon + '",\n';
+            json += '    "description": "' + desc + '",\n';
+            json += '    "embedId": "' + slug + '"\n';
+            json += '  }';
+            return json;
+        }
+
         document.getElementById('generateBtn').addEventListener('click', function() {
-            const name = document.getElementById('toolName').value.trim();
-            const icon = document.getElementById('toolIcon').value.trim() || '🛠️';
-            const desc = document.getElementById('toolDesc').value.trim() || 'A useful micro tool';
+            var name = document.getElementById('toolName').value.trim();
+            var icon = document.getElementById('toolIcon').value.trim() || '🛠️';
+            var desc = document.getElementById('toolDesc').value.trim() || 'A useful micro tool';
 
             if (!name) {
                 alert('Please enter a tool name.');
                 return;
             }
 
-            const slug = slugify(name);
-            const embedId = slug;
-            const seoTitle = `Free ${name} (No Signup) | Embed Factory`;
-            const seoDesc = `${desc}. Free, fast, and mobile-friendly.`;
+            var slug = slugify(name);
+            var seoTitle = 'Free ' + name + ' (No Signup) | Embed Factory';
+            var seoDesc = desc + '. Free, fast, and mobile-friendly.';
 
-            // HTML Template
-            const htmlCode = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>${seoTitle}</title>
-    <meta name="description" content="${seoDesc}">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { background: #0f0f0f; color: #f1f5f9; font-family: system-ui, sans-serif; }
-    </style>
-</head>
-<body class="p-4 max-w-lg mx-auto">
-    <div class="flex items-center gap-2 mb-6">
-        <a href="https://mobifactory.pages.dev" class="text-2xl text-gray-400">←</a>
-        <h1 class="text-2xl font-bold tracking-tight">${icon} ${name}</h1>
-    </div>
-    <p class="text-zinc-400 text-sm mb-4">${desc}.</p>
-    <!-- Add your tool logic here -->
-    <div class="text-center text-zinc-500 text-sm mt-8">✨ Your tool content goes here.</div>
-    <div class="mt-6 p-3 bg-zinc-900 rounded-xl border border-zinc-800 text-center">
-        <p class="text-xs text-zinc-500 mb-2">Embed this tool on your site</p>
-        <textarea readonly class="w-full h-12 p-2 bg-black border border-zinc-700 rounded-lg text-xs text-green-400 font-mono mb-2">&lt;iframe src="https://mobifactory.pages.dev/tools/${slug}.html" width="100%" height="400" frameborder="0"&gt;&lt;/iframe&gt;</textarea>
-        <button onclick="navigator.clipboard.writeText(this.previousElementSibling.value);alert('Embed code copied!')" class="bg-green-700 text-white px-4 py-1 rounded-lg text-xs font-bold">📋 Copy Embed Code</button>
-    </div>
-    <script src="/router.js"></script>
-</body>
-</html>`;
+            document.getElementById('htmlOutput').value = buildHTML(name, icon, desc, slug);
+            document.getElementById('jsonOutput').value = buildJSON(name, slug, icon, desc);
+            document.getElementById('seoOutput').value = '<title>' + seoTitle + '</title>\n<meta name="description" content="' + seoDesc + '">';
 
-            // JSON Entry
-            const jsonEntry = `  ,
-  {
-    "name": "${name}",
-    "file": "/tools/${slug}.html",
-    "icon": "${icon}",
-    "description": "${desc}",
-    "embedId": "${embedId}"
-  }`;
-
-            // SEO Meta
-            const seoMeta = `<title>${seoTitle}</title>
-<meta name="description" content="${seoDesc}">`;
-
-            document.getElementById('htmlOutput').value = htmlCode;
-            document.getElementById('jsonOutput').value = jsonEntry;
-            document.getElementById('seoOutput').value = seoMeta;
             document.getElementById('outputArea').classList.remove('hidden');
             document.getElementById('outputArea').scrollIntoView({behavior: 'smooth'});
         });
 
         function copyToClipboard(elementId) {
-            const textarea = document.getElementById(elementId);
+            var textarea = document.getElementById(elementId);
             textarea.select();
             textarea.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(textarea.value).then(() => {
+            navigator.clipboard.writeText(textarea.value).then(function() {
                 alert('Copied!');
-            }).catch(() => {
+            }).catch(function() {
                 alert('Copy failed. Please select and copy manually.');
             });
         }
