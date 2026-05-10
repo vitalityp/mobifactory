@@ -96,5 +96,12 @@
   "icon": "🧠",
   "description": "Smart demand scanner with action buttons",
   "embedId": "ade-command"
+},
+{
+  "name": "ADE Assistant",
+  "file": "/tools/ade-assistant.html",
+  "icon": "🤖",
+  "description": "Your daily AI-powered work planner",
+  "embedId": "ade-assistant"
 }
 ]
