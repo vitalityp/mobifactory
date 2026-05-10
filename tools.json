@@ -68,5 +68,12 @@
   "icon": "🔍",
   "description": "Scan freelance trends & pain points",
   "embedId": "demand-scanner"
+},
+{
+  "name": "Asset Builder",
+  "file": "/tools/asset-builder.html",
+  "icon": "🏗️",
+  "description": "Generate starter code for new tools",
+  "embedId": "asset-builder"
 }
 ]
