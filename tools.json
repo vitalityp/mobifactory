@@ -89,5 +89,12 @@
   "icon": "⚡",
   "description": "One-click post to all social media",
   "embedId": "social-auto-pilot"
+},
+{
+  "name": "Command Center",
+  "file": "/tools/ade-command.html",
+  "icon": "🧠",
+  "description": "Smart demand scanner with action buttons",
+  "embedId": "ade-command"
 }
 ]
