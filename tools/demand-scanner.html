@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Demand Scanner | ADE Layer 1</title>
+    <meta name="description" content="Scan Reddit for freelance pain points and trends in real-time.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0f0f0f; color: #f1f5f9; font-family: system-ui, sans-serif; }
+        .trend-card { background: #1e1e2e; border: 1px solid #334155; }
+        .need-tool { border-left: 4px solid #f59e0b; }
+        .money-post { border-left: 4px solid #10b981; }
+        .pain-point { border-left: 4px solid #ef4444; }
+    </style>
+</head>
+<body class="p-4 max-w-2xl mx-auto">
+    <div class="flex items-center gap-2 mb-6">
+        <a href="https://mobifactory.pages.dev" class="text-2xl text-gray-400">←</a>
+        <h1 class="text-2xl font-bold tracking-tight text-orange-400">🔍 Demand Scanner</h1>
+    </div>
+    <p class="text-zinc-400 text-sm mb-4">Scanning freelance subreddits for pain points, money posts, and tool needs. Click "Scan Now" to refresh.</p>
+
+    <button id="scanBtn" class="w-full bg-orange-700 hover:bg-orange-600 text-white font-bold py-4 rounded-xl text-lg shadow-lg transition mb-6">
+        🔍 Scan Now
+    </button>
+    <p id="statusText" class="text-center text-zinc-500 text-xs mb-4">Ready to scan. Click above to start.</p>
+
+    <div id="resultsContainer" class="space-y-4"></div>
+
+    <script>
+        const SUBREDDITS = ['freelance', 'forhire', 'upwork', 'smallbusiness', 'sideproject'];
+        const KEYWORDS = {
+            needTool: ['tool', 'generator', 'calculator', 'builder', 'create', 'automate', 'template', 'simple app'],
+            money: ['rate', 'charge', 'price', 'earning', 'revenue', 'income', 'client pay', 'budget'],
+            pain: ['struggling', 'tired of', 'frustrated', 'hard to', 'difficult', 'problem', 'help with', 'anyone know']
+        };
+
+        function detectCategory(title, text) {
+            const content = (title + ' ' + text).toLowerCase();
+            if (KEYWORDS.needTool.some(w => content.includes(w))) return 'need-tool';
+            if (KEYWORDS.money.some(w => content.includes(w))) return 'money-post';
+            if (KEYWORDS.pain.some(w => content.includes(w))) return 'pain-point';
+            return '';
+        }
+
+        function buildCard(post) {
+            const categoryClass = detectCategory(post.title, post.selftext);
+            const categoryLabel = categoryClass === 'need-tool' ? '🧰 Tool Idea' : categoryClass === 'money-post' ? '💰 Money' : '😣 Pain Point';
+
+            return `
+                <a href="https://reddit.com${post.permalink}" target="_blank" class="block trend-card p-4 rounded-xl ${categoryClass} hover:bg-zinc-800 transition">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <p class="text-xs text-orange-400 mb-1">r/${post.subreddit} • ${categoryLabel}</p>
+                            <h3 class="font-bold text-white text-sm leading-snug">${post.title}</h3>
+                            <p class="text-xs text-zinc-500 mt-1">⬆ ${post.ups} • 💬 ${post.num_comments} comments</p>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }
+
+        async function scanReddit() {
+            const container = document.getElementById('resultsContainer');
+            const status = document.getElementById('statusText');
+            const scanBtn = document.getElementById('scanBtn');
+            
+            scanBtn.disabled = true;
+            scanBtn.innerText = '⏳ Scanning...';
+            status.innerText = 'Fetching latest posts from Reddit...';
+            container.innerHTML = '<p class="text-center text-zinc-500">Loading...</p>';
+
+            try {
+                const allPosts = [];
+                for (const sub of SUBREDDITS) {
+                    const url = `https://www.reddit.com/r/${sub}/hot.json?limit=15`;
+                    const response = await fetch(url);
+                    if (!response.ok) continue;
+                    const data = await response.json();
+                    const posts = data.data.children.map(c => c.data);
+                    allPosts.push(...posts);
+                }
+
+                const filtered = allPosts.filter(post => detectCategory(post.title, post.selftext));
+                filtered.sort((a, b) => b.ups - a.ups);
+
+                container.innerHTML = '';
+                if (filtered.length === 0) {
+                    container.innerHTML = '<p class="text-center text-zinc-500">No trending pain points found right now. Try again later.</p>';
+                } else {
+                    filtered.slice(0, 15).forEach(post => {
+                        container.innerHTML += buildCard(post);
+                    });
+                }
+                status.innerText = `✅ Last scan: ${new Date().toLocaleTimeString()}. Found ${filtered.length} relevant posts.`;
+            } catch (err) {
+                status.innerText = '⚠️ Scan failed. Reddit may be blocking requests. Try again later.';
+                container.innerHTML = '<p class="text-center text-red-400">Unable to fetch data. This can happen on mobile networks or after too many requests.</p>';
+            } finally {
+                scanBtn.disabled = false;
+                scanBtn.innerText = '🔍 Scan Now';
+            }
+        }
+
+        document.getElementById('scanBtn').addEventListener('click', scanReddit);
+        scanReddit();
+    </script>
+</body>
+</html>
