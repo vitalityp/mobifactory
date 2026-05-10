@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Smart Distribution Engine | ADE Layer 5</title>
+    <meta name="description" content="Generate ready-to-post social media copy for your tools.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0f0f0f; color: #f1f5f9; font-family: system-ui, sans-serif; }
+    </style>
+</head>
+<body class="p-4 max-w-lg mx-auto">
+    <div class="flex items-center gap-2 mb-6">
+        <a href="https://mobifactory.pages.dev" class="text-2xl text-gray-400">←</a>
+        <h1 class="text-2xl font-bold tracking-tight text-pink-400">📣 Distribution Engine</h1>
+    </div>
+    <p class="text-zinc-400 text-sm mb-4">Select a tool to generate ready-to-post social media copy.</p>
+
+    <div class="space-y-3 mb-6">
+        <div>
+            <label class="block text-xs text-zinc-500 mb-1">Select Tool</label>
+            <select id="toolSelect" class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white">
+                <option value="">-- Choose a tool --</option>
+                <option value="contract-craft">📄 ContractCraft</option>
+                <option value="invoice-generator">🧾 Invoice Generator</option>
+                <option value="tax-calculator">💰 Tax Calculator</option>
+                <option value="proposal-generator">📝 Proposal Generator</option>
+                <option value="pricing-calculator">💲 Pricing Calculator</option>
+                <option value="rate-optimizer">⚡ Rate Optimizer</option>
+                <option value="demand-scanner">🔍 Demand Scanner</option>
+                <option value="roast-bio">🔥 AI Roast My Bio</option>
+                <option value="hacker-name">💻 Hacker Name Generator</option>
+                <option value="fake-chat">💬 Fake iMessage Chat</option>
+            </select>
+        </div>
+    </div>
+
+    <button id="generateBtn" class="w-full bg-pink-700 hover:bg-pink-600 text-white font-bold py-4 rounded-xl text-lg shadow-lg transition">
+        ✨ Generate Posts
+    </button>
+
+    <div id="outputArea" class="mt-6 hidden space-y-6">
+        <!-- Reddit -->
+        <div>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="text-lg">🤖</span>
+                <p class="text-xs text-pink-400 font-semibold">Reddit Post</p>
+            </div>
+            <textarea readonly id="redditOutput" class="w-full h-32 p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-xs text-green-400 font-mono"></textarea>
+            <button onclick="copyToClipboard('redditOutput')" class="mt-2 bg-pink-700 text-white px-4 py-1 rounded-lg text-xs">📋 Copy Reddit</button>
+        </div>
+        <!-- LinkedIn -->
+        <div>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="text-lg">💼</span>
+                <p class="text-xs text-pink-400 font-semibold">LinkedIn Post</p>
+            </div>
+            <textarea readonly id="linkedinOutput" class="w-full h-32 p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-xs text-green-400 font-mono"></textarea>
+            <button onclick="copyToClipboard('linkedinOutput')" class="mt-2 bg-pink-700 text-white px-4 py-1 rounded-lg text-xs">📋 Copy LinkedIn</button>
+        </div>
+        <!-- Facebook -->
+        <div>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="text-lg">📘</span>
+                <p class="text-xs text-pink-400 font-semibold">Facebook Group Post</p>
+            </div>
+            <textarea readonly id="facebookOutput" class="w-full h-32 p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-xs text-green-400 font-mono"></textarea>
+            <button onclick="copyToClipboard('facebookOutput')" class="mt-2 bg-pink-700 text-white px-4 py-1 rounded-lg text-xs">📋 Copy Facebook</button>
+        </div>
+        <!-- WhatsApp -->
+        <div>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="text-lg">💬</span>
+                <p class="text-xs text-pink-400 font-semibold">WhatsApp / Status</p>
+            </div>
+            <textarea readonly id="whatsappOutput" class="w-full h-24 p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-xs text-green-400 font-mono"></textarea>
+            <button onclick="copyToClipboard('whatsappOutput')" class="mt-2 bg-pink-700 text-white px-4 py-1 rounded-lg text-xs">📋 Copy WhatsApp</button>
+        </div>
+    </div>
+
+    <script>
+        // Tool copy database
+        const copyDB = {
+            'contract-craft': {
+                name: 'ContractCraft',
+                url: 'https://mobifactory.pages.dev/tools/contract-craft.html',
+                hook: 'I built a free tool that generates freelance contracts in seconds (no signup)',
+                story: 'I was tired of writing contracts manually, so I made this.',
+                desc: 'Generate freelance contracts instantly.'
+            },
+            'invoice-generator': {
+                name: 'Invoice Generator',
+                url: 'https://mobifactory.pages.dev/tools/invoice-generator.html',
+                hook: 'I built a free tool that creates professional invoices in seconds',
+                story: 'No more messy spreadsheets. Just fill and generate.',
+                desc: 'Create clean, professional invoices for your freelance projects.'
+            },
+            'tax-calculator': {
+                name: 'Tax Calculator',
+                url: 'https://mobifactory.pages.dev/tools/tax-calculator.html',
+                hook: 'I built a free tax reserve calculator for freelancers',
+                story: 'Knowing how much to set aside for tax is hard. This makes it easy.',
+                desc: 'Estimate your freelance tax liability in seconds.'
+            },
+            'proposal-generator': {
+                name: 'Proposal Generator',
+                url: 'https://mobifactory.pages.dev/tools/proposal-generator.html',
+                hook: 'I built a free tool to generate project proposals in seconds',
+                story: 'Stop writing proposals from scratch. Just fill in the blanks.',
+                desc: 'Create polished project proposals instantly.'
+            },
+            'pricing-calculator': {
+                name: 'Pricing Calculator',
+                url: 'https://mobifactory.pages.dev/tools/pricing-calculator.html',
+                hook: 'I built a free pricing calculator for freelance projects',
+                story: 'Stop guessing your rates. Let data guide you.',
+                desc: 'Calculate the right price for your freelance projects.'
+            },
+            'rate-optimizer': {
+                name: 'Rate Optimizer',
+                url: 'https://mobifactory.pages.dev/tools/rate-optimizer.html',
+                hook: 'I built a free tool to find your ideal freelance hourly rate',
+                story: 'Enter your income goals, taxes, and expenses — get your rate.',
+                desc: 'Find the hourly rate you need to reach your income goals.'
+            },
+            'demand-scanner': {
+                name: 'Demand Scanner',
+                url: 'https://mobifactory.pages.dev/tools/demand-scanner.html',
+                hook: 'I built a tool that scans Reddit for freelance pain points',
+                story: 'See what freelancers are struggling with — in real time.',
+                desc: 'Discover trending freelance problems and opportunities.'
+            },
+            'roast-bio': {
+                name: 'AI Roast My Bio',
+                url: 'https://mobifactory.pages.dev/tools/roast-bio.html',
+                hook: 'I built a free AI tool that roasts your Instagram bio',
+                story: 'Paste your bio and let AI destroy it. Hilarious results.',
+                desc: 'Let AI brutally roast your social media bio.'
+            },
+            'hacker-name': {
+                name: 'Hacker Name Generator',
+                url: 'https://mobifactory.pages.dev/tools/hacker-name.html',
+                hook: 'I built a free hacker name generator for fun',
+                story: 'Find your cyberpunk alias in one click.',
+                desc: 'Generate a cool hacker alias instantly.'
+            },
+            'fake-chat': {
+                name: 'Fake iMessage Chat',
+                url: 'https://mobifactory.pages.dev/tools/fake-chat.html',
+                hook: 'I built a free fake iMessage chat generator for pranks',
+                story: 'Create realistic prank screenshots in seconds.',
+                desc: 'Craft fake iMessage conversations for fun.'
+            }
+        };
+
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            const toolId = document.getElementById('toolSelect').value;
+            if (!toolId) {
+                alert('Please select a tool first.');
+                return;
+            }
+            const data = copyDB[toolId];
+
+            // Reddit
+            const reddit = `${data.hook}\n\n${data.story}\n${data.url}\n\nWould love feedback 🙌\nAlso, if anyone needs a custom tool like this for their business, I'm building them starting at $50.`;
+            document.getElementById('redditOutput').value = reddit;
+
+            // LinkedIn
+            const linkedin = `I built a free suite of tools for freelancers — no signup, no ads, just pure utility.\n\nIt includes:\n📄 ContractCraft – Generate freelance contracts in seconds\n🧾 Invoice Generator – Professional invoices, instantly\n💰 Tax Calculator – Know how much to set aside\n📝 Proposal Generator – Send clean project proposals\n\nAll mobile-friendly, free, and embeddable.\n\nIf you're a freelancer struggling with paperwork, give these a try:\n👉 https://mobifactory.pages.dev\n\nFeedback welcome. If you need a custom tool for your business, I'm building them starting at $50.`;
+            document.getElementById('linkedinOutput').value = linkedin;
+
+            // Facebook
+            const facebook = `Hey freelancers! 👋\n\nI got tired of writing contracts and invoices from scratch, so I built some free tools to solve that.\n\nYou can now:\n✅ Generate a contract in seconds\n✅ Create professional invoices\n✅ Estimate your tax reserve\n✅ Draft a project proposal\n\nNo signup. No catch. Just tools that work on mobile too.\n\nCheck them out: https://mobifactory.pages.dev\n\nI'd love your feedback. And if anyone needs a custom tool for their business, I'm building them for as low as $50.`;
+            document.getElementById('facebookOutput').value = facebook;
+
+            // WhatsApp
+            const whatsapp = `Freelancers! 📢\nI built free tools to generate contracts, invoices, tax estimates, and proposals — all in seconds.\nNo signup required, works on mobile.\n👉 https://mobifactory.pages.dev\nFeedback means the world to me 🙌`;
+            document.getElementById('whatsappOutput').value = whatsapp;
+
+            document.getElementById('outputArea').classList.remove('hidden');
+            document.getElementById('outputArea').scrollIntoView({behavior: 'smooth'});
+        });
+
+        function copyToClipboard(elementId) {
+            const textarea = document.getElementById(elementId);
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(textarea.value).then(function() {
+                alert('Copied!');
+            }).catch(function() {
+                alert('Copy failed. Please select and copy manually.');
+            });
+        }
+    </script>
+</body>
+  </html>
