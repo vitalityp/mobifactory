@@ -82,5 +82,12 @@
   "icon": "📣",
   "description": "Generate ready-to-post social media copy",
   "embedId": "distribution-engine"
+},
+{
+  "name": "Social Auto-Pilot",
+  "file": "/tools/social-auto-pilot.html",
+  "icon": "⚡",
+  "description": "One-click post to all social media",
+  "embedId": "social-auto-pilot"
 }
 ]
