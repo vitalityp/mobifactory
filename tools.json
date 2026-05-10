@@ -61,5 +61,12 @@
   "icon": "⚡",
   "description": "Find your ideal freelance hourly rate",
   "embedId": "rate-optimizer"
+},
+{
+  "name": "Demand Scanner",
+  "file": "/tools/demand-scanner.html",
+  "icon": "🔍",
+  "description": "Scan freelance trends & pain points",
+  "embedId": "demand-scanner"
 }
 ]
