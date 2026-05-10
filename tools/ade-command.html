@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>ADE Command Center | Embed Factory</title>
+    <meta name="description" content="Smart demand scanner, content factory, and action center for your freelance tool empire.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0a0a0a; color: #f1f5f9; font-family: system-ui, sans-serif; }
+        .action-card { background: #1a1a2e; border: 1px solid #2a2a4a; }
+    </style>
+</head>
+<body class="p-4 max-w-2xl mx-auto">
+    <div class="flex items-center gap-2 mb-6">
+        <a href="https://mobifactory.pages.dev" class="text-2xl text-gray-400">←</a>
+        <h1 class="text-2xl font-bold tracking-tight text-purple-400">🧠 ADE Command Center</h1>
+    </div>
+    <p class="text-zinc-400 text-sm mb-4">Scan Reddit → Get smart suggestions → Take action with one click.</p>
+
+    <button id="scanBtn" class="w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-4 rounded-xl text-lg shadow-lg transition mb-6">
+        🔍 Scan & Analyze
+    </button>
+    <p id="statusText" class="text-center text-zinc-500 text-xs mb-4">Ready. Click above to scan freelance subreddits.</p>
+
+    <div id="resultsContainer" class="space-y-4"></div>
+
+    <script>
+        const SUBREDDITS = ['freelance', 'forhire', 'upwork', 'smallbusiness', 'sideproject'];
+        const KEYWORDS = {
+            needTool: ['tool', 'generator', 'calculator', 'builder', 'create', 'automate', 'template', 'simple app'],
+            money: ['rate', 'charge', 'price', 'earning', 'revenue', 'income', 'client pay', 'budget'],
+            pain: ['struggling', 'tired of', 'frustrated', 'hard to', 'difficult', 'problem', 'help with', 'anyone know'],
+            contract: ['contract', 'agreement', 'legal', 'freelance agreement'],
+            invoice: ['invoice', 'bill', 'payment', 'billing'],
+            tax: ['tax', 'taxes', 'taxation', 'tax return'],
+            proposal: ['proposal', 'pitch', 'client proposal'],
+            pricing: ['pricing', 'rate', 'hourly rate', 'how much to charge']
+        };
+
+        // Tool mapping
+        const toolSuggestions = {
+            contract: { name: 'ContractCraft', url: '/tools/contract-craft.html', icon: '📄', action: 'Open Tool' },
+            invoice: { name: 'Invoice Generator', url: '/tools/invoice-generator.html', icon: '🧾', action: 'Open Tool' },
+            tax: { name: 'Tax Calculator', url: '/tools/tax-calculator.html', icon: '💰', action: 'Open Tool' },
+            proposal: { name: 'Proposal Generator', url: '/tools/proposal-generator.html', icon: '📝', action: 'Open Tool' },
+            pricing: { name: 'Pricing Calculator', url: '/tools/pricing-calculator.html', icon: '💲', action: 'Open Tool' },
+            needTool: { name: 'Build New Tool', url: '/tools/asset-builder.html', icon: '🏗️', action: 'Asset Builder' }
+        };
+
+        function detectToolMatch(title, selftext) {
+            const content = (title + ' ' + selftext).toLowerCase();
+            if (KEYWORDS.contract.some(w => content.includes(w))) return 'contract';
+            if (KEYWORDS.invoice.some(w => content.includes(w))) return 'invoice';
+            if (KEYWORDS.tax.some(w => content.includes(w))) return 'tax';
+            if (KEYWORDS.proposal.some(w => content.includes(w))) return 'proposal';
+            if (KEYWORDS.pricing.some(w => content.includes(w))) return 'pricing';
+            if (KEYWORDS.needTool.some(w => content.includes(w))) return 'needTool';
+            return null;
+        }
+
+        function detectCategory(title, text) {
+            const content = (title + ' ' + text).toLowerCase();
+            if (KEYWORDS.needTool.some(w => content.includes(w))) return 'need-tool';
+            if (KEYWORDS.money.some(w => content.includes(w))) return 'money-post';
+            if (KEYWORDS.pain.some(w => content.includes(w))) return 'pain-point';
+            return '';
+        }
+
+        function buildActionCard(post, toolMatch) {
+            const categoryClass = detectCategory(post.title, post.selftext);
+            const categoryLabel = categoryClass === 'need-tool' ? '🧰 Tool Idea' : categoryClass === 'money-post' ? '💰 Money' : '😣 Pain Point';
+            const tool = toolMatch ? toolSuggestions[toolMatch] : null;
+            const suggestNewTool = categoryClass === 'need-tool' && !toolMatch;
+
+            let actionHTML = '';
+            if (tool) {
+                actionHTML = `
+                    <div class="flex gap-2 mt-3">
+                        <a href="${tool.url}" class="flex-1 bg-purple-700 hover:bg-purple-600 text-white font-bold py-2 rounded-lg text-xs text-center transition">${tool.icon} ${tool.action}</a>
+                        <a href="/tools/social-auto-pilot.html" class="flex-1 bg-pink-700 hover:bg-pink-600 text-white font-bold py-2 rounded-lg text-xs text-center transition">📣 Share This</a>
+                    </div>
+                `;
+            } else if (suggestNewTool) {
+                actionHTML = `
+                    <div class="flex gap-2 mt-3">
+                        <a href="/tools/asset-builder.html" class="flex-1 bg-teal-700 hover:bg-teal-600 text-white font-bold py-2 rounded-lg text-xs text-center transition">🏗️ Build New Tool</a>
+                        <a href="/tools/social-auto-pilot.html" class="flex-1 bg-pink-700 hover:bg-pink-600 text-white font-bold py-2 rounded-lg text-xs text-center transition">📣 Share Demand</a>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="action-card p-4 rounded-xl">
+                    <p class="text-xs text-purple-400 mb-1">r/${post.subreddit} • ${categoryLabel}</p>
+                    <h3 class="font-bold text-white text-sm leading-snug">${post.title}</h3>
+                    <p class="text-xs text-zinc-500 mt-1">⬆ ${post.ups} • 💬 ${post.num_comments} comments</p>
+                    ${tool ? `<p class="text-xs text-green-400 mt-2">✅ Our solution: ${tool.name}</p>` : ''}
+                    ${suggestNewTool ? `<p class="text-xs text-yellow-400 mt-2">💡 New tool opportunity detected!</p>` : ''}
+                    ${actionHTML}
+                </div>
+            `;
+        }
+
+        async function scanReddit() {
+            const container = document.getElementById('resultsContainer');
+            const status = document.getElementById('statusText');
+            const scanBtn = document.getElementById('scanBtn');
+            
+            scanBtn.disabled = true;
+            scanBtn.innerText = '⏳ Analyzing...';
+            status.innerText = 'Scanning Reddit and matching with our tools...';
+            container.innerHTML = '<p class="text-center text-zinc-500">Loading...</p>';
+
+            try {
+                const allPosts = [];
+                for (const sub of SUBREDDITS) {
+                    const url = `https://www.reddit.com/r/${sub}/hot.json?limit=15`;
+                    const response = await fetch(url);
+                    if (!response.ok) continue;
+                    const data = await response.json();
+                    const posts = data.data.children.map(c => c.data);
+                    allPosts.push(...posts);
+                }
+
+                const analyzed = allPosts.map(post => ({
+                    ...post,
+                    toolMatch: detectToolMatch(post.title, post.selftext),
+                    category: detectCategory(post.title, post.selftext)
+                }));
+
+                const relevant = analyzed.filter(p => p.toolMatch || p.category);
+                relevant.sort((a, b) => b.ups - a.ups);
+
+                container.innerHTML = '';
+                if (relevant.length === 0) {
+                    container.innerHTML = '<p class="text-center text-zinc-500">No actionable trends found. Try again later.</p>';
+                } else {
+                    relevant.slice(0, 12).forEach(post => {
+                        container.innerHTML += buildActionCard(post, post.toolMatch);
+                    });
+                }
+                status.innerText = `✅ Analyzed. Found ${relevant.length} actionable posts.`;
+            } catch (err) {
+                status.innerText = '⚠️ Scan failed. Reddit may be blocking. Try later.';
+                container.innerHTML = '<p class="text-center text-red-400">Unable to fetch. Try again in a few minutes.</p>';
+            } finally {
+                scanBtn.disabled = false;
+                scanBtn.innerText = '🔍 Scan & Analyze';
+            }
+        }
+
+        document.getElementById('scanBtn').addEventListener('click', scanReddit);
+        scanReddit();
+    </script>
+</body>
+</html>
