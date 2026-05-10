@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>ADE Personal Assistant | Embed Factory</title>
+    <meta name="description" content="Your global freelance empire assistant with comment generator.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0a0a0a; color: #f1f5f9; font-family: system-ui, sans-serif; }
+        .task-card { background: #1a1a2e; border: 1px solid #2a2a4a; }
+    </style>
+</head>
+<body class="p-4 max-w-2xl mx-auto">
+    <div class="flex items-center gap-2 mb-6">
+        <a href="https://mobifactory.pages.dev" class="text-2xl text-gray-400">←</a>
+        <h1 class="text-2xl font-bold tracking-tight text-cyan-400">🤖 ADE Personal Assistant</h1>
+    </div>
+    <p class="text-zinc-400 text-sm mb-4">Good morning, Boss. I've prepared your daily plan with ready-to-copy comments for Reddit. Everything is under your control — just tap "Copy Comment" and paste.</p>
+
+    <button id="scanBtn" class="w-full bg-cyan-700 hover:bg-cyan-600 text-white font-bold py-4 rounded-xl text-lg shadow-lg transition mb-6">
+        🔍 Scan & Prepare Daily Plan
+    </button>
+    <p id="statusText" class="text-center text-zinc-500 text-xs mb-4">Ready to plan your day. Click above.</p>
+
+    <div id="planContainer" class="space-y-4"></div>
+
+    <script>
+        const SUBREDDITS = ['freelance', 'forhire', 'sideproject', 'smallbusiness'];
+        const TOOLS = [
+            { name: 'ContractCraft', url: '/tools/contract-craft.html', icon: '📄', keywords: ['contract', 'agreement', 'legal'], commentIntro: 'I built a free contract generator that might help you.' },
+            { name: 'Invoice Generator', url: '/tools/invoice-generator.html', icon: '🧾', keywords: ['invoice', 'bill', 'payment'], commentIntro: 'I made a free invoice generator — no signup, instant.' },
+            { name: 'Tax Calculator', url: '/tools/tax-calculator.html', icon: '💰', keywords: ['tax', 'taxes', 'taxation'], commentIntro: 'I built a tax reserve calculator for freelancers. Free and easy.' },
+            { name: 'Proposal Generator', url: '/tools/proposal-generator.html', icon: '📝', keywords: ['proposal', 'pitch'], commentIntro: 'Free proposal generator I made — might save you time.' },
+            { name: 'Pricing Calculator', url: '/tools/pricing-calculator.html', icon: '💲', keywords: ['pricing', 'rate', 'hourly rate'], commentIntro: 'I created a pricing calculator that gives a data-backed price.' },
+            { name: 'Rate Optimizer', url: '/tools/rate-optimizer.html', icon: '⚡', keywords: ['rate', 'optimize', 'income goals'], commentIntro: 'Free rate optimizer I built — find your ideal hourly rate.' }
+        ];
+
+        function detectToolMatches(title, selftext) {
+            const content = (title + ' ' + selftext).toLowerCase();
+            const matches = TOOLS.filter(tool => tool.keywords.some(kw => content.includes(kw)));
+            return matches;
+        }
+
+        function generateComment(post, matches) {
+            const siteUrl = 'https://mobifactory.pages.dev';
+            let comment = '';
+            if (matches.length > 0) {
+                // Use the first matched tool for a personalized comment
+                const tool = matches[0];
+                comment = `${tool.commentIntro} ${siteUrl}${tool.url}\n\nIt's part of a larger suite I built for freelancers — all free, no signup. Let me know if you need anything custom — I build tools starting at $50.`;
+            } else {
+                // Generic helpful comment
+                comment = `I've been building free tools for freelancers to simplify contracts, invoices, taxes, and proposals. Check them out: ${siteUrl}\n\nIf you ever need a custom tool for your business, I build them starting at $50.`;
+            }
+            return comment;
+        }
+
+        function buildTaskItem(post, matches) {
+            const toolLinks = matches.map(t => `<a href="${t.url}" class="text-cyan-400 underline">${t.icon} ${t.name}</a>`).join(', ');
+            const commentText = generateComment(post, matches);
+            const replyUrl = `mailto:pulsevitality192@gmail.com?subject=Re%3A%20Freelance%20Tool%20Help&body=Hi%2C%20I%20saw%20your%20post%20about%20freelancing%20tools.%20I%20built%20a%20free%20suite%20that%20might%20help%20you%20%3A%20https%3A%2F%2Fmobifactory.pages.dev%20.%20If%20you%20need%20a%20custom%20tool%2C%20I%20build%20them%20starting%20at%20%2450.`;
+
+            return `
+                <div class="task-card p-4 rounded-xl">
+                    <p class="text-xs text-cyan-400 mb-1">r/${post.subreddit} • ⬆ ${post.ups}</p>
+                    <h3 class="font-bold text-white text-sm">${post.title}</h3>
+                    <p class="text-xs text-zinc-500 mt-1">Matched tools: ${toolLinks || 'None directly, but opportunity to help'}</p>
+                    
+                    <!-- Ready-to-copy comment preview -->
+                    <div class="mt-3 bg-black/50 p-3 rounded-lg border border-zinc-700">
+                        <p class="text-xs text-zinc-400 mb-1">💬 Suggested Comment:</p>
+                        <p class="text-xs text-green-400 whitespace-pre-line">${commentText}</p>
+                        <button onclick="navigator.clipboard.writeText(this.previousElementSibling.previousElementSibling.previousElementSibling.innerText);alert('Comment copied! Paste it on Reddit.')" class="mt-2 bg-cyan-700 hover:bg-cyan-600 text-white font-bold py-1 px-4 rounded-lg text-xs transition">📋 Copy Comment</button>
+                    </div>
+
+                    <div class="flex gap-2 mt-3 flex-wrap">
+                        <a href="https://www.reddit.com${post.permalink}" target="_blank" class="bg-orange-700 hover:bg-orange-600 text-white font-bold py-2 px-3 rounded-lg text-xs transition">🔗 Open Post</a>
+                        <a href="${replyUrl}" target="_blank" class="bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-3 rounded-lg text-xs transition">✉️ Reply & Offer Help</a>
+                        ${matches.length > 0 ? `<a href="/tools/social-auto-pilot.html" class="bg-pink-700 hover:bg-pink-600 text-white font-bold py-2 px-3 rounded-lg text-xs transition">📣 Share Our Tool</a>` : `<a href="/tools/asset-builder.html" class="bg-teal-700 hover:bg-teal-600 text-white font-bold py-2 px-3 rounded-lg text-xs transition">🏗️ Build Missing Tool</a>`}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function dailyScan() {
+            const container = document.getElementById('planContainer');
+            const status = document.getElementById('statusText');
+            const scanBtn = document.getElementById('scanBtn');
+            
+            scanBtn.disabled = true;
+            scanBtn.innerText = '⏳ Preparing your plan...';
+            status.innerText = 'Scanning Reddit for today\'s best opportunities...';
+            container.innerHTML = '<p class="text-center text-zinc-500">Analyzing...</p>';
+
+            try {
+                const allPosts = [];
+                for (const sub of SUBREDDITS) {
+                    const url = `https://www.reddit.com/r/${sub}/hot.json?limit=10`;
+                    const response = await fetch(url);
+                    if (!response.ok) continue;
+                    const data = await response.json();
+                    const posts = data.data.children.map(c => c.data);
+                    allPosts.push(...posts);
+                }
+
+                const analyzed = allPosts.map(post => ({
+                    ...post,
+                    matches: detectToolMatches(post.title, post.selftext)
+                })).filter(p => p.matches.length > 0 || p.ups > 20);
+
+                analyzed.sort((a, b) => b.ups - a.ups);
+
+                container.innerHTML = '';
+                if (analyzed.length === 0) {
+                    container.innerHTML = '<p class="text-center text-zinc-500">No strong opportunities today. Try again later or check Demand Scanner.</p>';
+                } else {
+                    analyzed.slice(0, 8).forEach(post => {
+                        container.innerHTML += buildTaskItem(post, post.matches);
+                    });
+                }
+                status.innerText = `✅ Today's plan ready. I found ${analyzed.length} opportunities.`;
+            } catch (err) {
+                status.innerText = '⚠️ Scan failed. Reddit may be blocking. Try again shortly.';
+                container.innerHTML = '<p class="text-center text-red-400">Unable to fetch data. Please try again.</p>';
+            } finally {
+                scanBtn.disabled = false;
+                scanBtn.innerText = '🔍 Scan & Prepare Daily Plan';
+            }
+        }
+
+        document.getElementById('scanBtn').addEventListener('click', dailyScan);
+        dailyScan();
+    </script>
+</body>
+</html>
