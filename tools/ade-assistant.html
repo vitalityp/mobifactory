@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>ADE Personal Assistant | Embed Factory</title>
-    <meta name="description" content="Your global freelance empire assistant with comment generator.">
+    <meta name="description" content="Your global freelance empire assistant with auto-post and comment generator.">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: #0a0a0a; color: #f1f5f9; font-family: system-ui, sans-serif; }
@@ -16,7 +16,7 @@
         <a href="https://mobifactory.pages.dev" class="text-2xl text-gray-400">←</a>
         <h1 class="text-2xl font-bold tracking-tight text-cyan-400">🤖 ADE Personal Assistant</h1>
     </div>
-    <p class="text-zinc-400 text-sm mb-4">Good morning, Boss. I've prepared your daily plan with ready-to-copy comments for Reddit. Everything is under your control — just tap "Copy Comment" and paste.</p>
+    <p class="text-zinc-400 text-sm mb-4">Good morning, Boss. I've prepared your daily plan with ready-to-copy comments and one-click auto-post for new submissions.</p>
 
     <button id="scanBtn" class="w-full bg-cyan-700 hover:bg-cyan-600 text-white font-bold py-4 rounded-xl text-lg shadow-lg transition mb-6">
         🔍 Scan & Prepare Daily Plan
@@ -38,28 +38,35 @@
 
         function detectToolMatches(title, selftext) {
             const content = (title + ' ' + selftext).toLowerCase();
-            const matches = TOOLS.filter(tool => tool.keywords.some(kw => content.includes(kw)));
-            return matches;
+            return TOOLS.filter(tool => tool.keywords.some(kw => content.includes(kw)));
         }
 
         function generateComment(post, matches) {
             const siteUrl = 'https://mobifactory.pages.dev';
-            let comment = '';
             if (matches.length > 0) {
-                // Use the first matched tool for a personalized comment
                 const tool = matches[0];
-                comment = `${tool.commentIntro} ${siteUrl}${tool.url}\n\nIt's part of a larger suite I built for freelancers — all free, no signup. Let me know if you need anything custom — I build tools starting at $50.`;
-            } else {
-                // Generic helpful comment
-                comment = `I've been building free tools for freelancers to simplify contracts, invoices, taxes, and proposals. Check them out: ${siteUrl}\n\nIf you ever need a custom tool for your business, I build them starting at $50.`;
+                return `${tool.commentIntro} ${siteUrl}${tool.url}\n\nIt's part of a larger suite I built for freelancers — all free, no signup. Let me know if you need anything custom — I build tools starting at $50.`;
             }
-            return comment;
+            return `I've been building free tools for freelancers to simplify contracts, invoices, taxes, and proposals. Check them out: ${siteUrl}\n\nIf you ever need a custom tool for your business, I build them starting at $50.`;
+        }
+
+        function generateAutoPostTitle(post, matches) {
+            if (matches.length > 0) {
+                return `I built a free ${matches[0].name.replace('_', ' ')} for freelancers — sharing in case it helps anyone`;
+            }
+            return `I built a free suite of tools for freelancers (contracts, invoices, taxes, proposals)`;
         }
 
         function buildTaskItem(post, matches) {
             const toolLinks = matches.map(t => `<a href="${t.url}" class="text-cyan-400 underline">${t.icon} ${t.name}</a>`).join(', ');
             const commentText = generateComment(post, matches);
             const replyUrl = `mailto:pulsevitality192@gmail.com?subject=Re%3A%20Freelance%20Tool%20Help&body=Hi%2C%20I%20saw%20your%20post%20about%20freelancing%20tools.%20I%20built%20a%20free%20suite%20that%20might%20help%20you%20%3A%20https%3A%2F%2Fmobifactory.pages.dev%20.%20If%20you%20need%20a%20custom%20tool%2C%20I%20build%20them%20starting%20at%20%2450.`;
+            
+            // Auto-post (new submission on a suitable subreddit)
+            const subredditForPost = post.subreddit; // use the same subreddit where the opportunity was found
+            const postTitle = generateAutoPostTitle(post, matches);
+            const postBody = commentText + '\n\n' + 'Full suite: https://mobifactory.pages.dev';
+            const autoPostUrl = `https://www.reddit.com/r/${subredditForPost}/submit?title=${encodeURIComponent(postTitle)}&text=${encodeURIComponent(postBody)}`;
 
             return `
                 <div class="task-card p-4 rounded-xl">
@@ -71,12 +78,13 @@
                     <div class="mt-3 bg-black/50 p-3 rounded-lg border border-zinc-700">
                         <p class="text-xs text-zinc-400 mb-1">💬 Suggested Comment:</p>
                         <p class="text-xs text-green-400 whitespace-pre-line">${commentText}</p>
-                        <button onclick="navigator.clipboard.writeText(this.previousElementSibling.previousElementSibling.previousElementSibling.innerText);alert('Comment copied! Paste it on Reddit.')" class="mt-2 bg-cyan-700 hover:bg-cyan-600 text-white font-bold py-1 px-4 rounded-lg text-xs transition">📋 Copy Comment</button>
+                        <button onclick="navigator.clipboard.writeText(this.previousElementSibling.previousElementSibling.innerText);alert('Comment copied! Paste it on Reddit.')" class="mt-2 bg-cyan-700 hover:bg-cyan-600 text-white font-bold py-1 px-4 rounded-lg text-xs transition">📋 Copy Comment</button>
                     </div>
 
                     <div class="flex gap-2 mt-3 flex-wrap">
                         <a href="https://www.reddit.com${post.permalink}" target="_blank" class="bg-orange-700 hover:bg-orange-600 text-white font-bold py-2 px-3 rounded-lg text-xs transition">🔗 Open Post</a>
                         <a href="${replyUrl}" target="_blank" class="bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-3 rounded-lg text-xs transition">✉️ Reply & Offer Help</a>
+                        <a href="${autoPostUrl}" target="_blank" class="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded-lg text-xs transition">📯 Auto-Post</a>
                         ${matches.length > 0 ? `<a href="/tools/social-auto-pilot.html" class="bg-pink-700 hover:bg-pink-600 text-white font-bold py-2 px-3 rounded-lg text-xs transition">📣 Share Our Tool</a>` : `<a href="/tools/asset-builder.html" class="bg-teal-700 hover:bg-teal-600 text-white font-bold py-2 px-3 rounded-lg text-xs transition">🏗️ Build Missing Tool</a>`}
                     </div>
                 </div>
